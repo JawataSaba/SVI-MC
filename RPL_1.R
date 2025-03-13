@@ -128,7 +128,7 @@ for (variable_name in variable_names) {
 }
 
 ################################################################################
-## Step 8: Calculate SPL (Summed Percentile Level)
+## Step 8: Calculate SPL
 ################################################################################
 # Create a list of the percentile rank dataframes.
 data_frames_list <- list(percentrank_variable_1, percentrank_variable_3, 
@@ -150,7 +150,7 @@ result_data <- data.frame(result_matrix)
 write.csv(result_data, "result_data_final_df_1.csv", row.names = FALSE)
 
 ################################################################################
-## Step 9: Calculate RPL (Relative Percentile Level) and Additional Statistics
+## Step 9: Calculate RPL 
 ################################################################################
 # Redefine the percentile rank function for RPL calculation (same logic as before).
 calculate_percentile_rank <- function(result_data, significance = 4) {
@@ -166,6 +166,9 @@ calculate_percentile_rank <- function(result_data, significance = 4) {
 RPL_rank_data_1 <- calculate_percentile_rank(result_data)
 RPL_rank_df_1 <- as.data.frame(RPL_rank_data_1)
 
+################################################################################
+## Step 10: Additional Statistics
+################################################################################
 # Calculate row-wise mean and standard deviation.
 mean_svi <- rowMeans(RPL_rank_df_1, na.rm = TRUE)
 stdv_svi <- apply(RPL_rank_df_1, 1, function(x) sd(x, na.rm = TRUE))

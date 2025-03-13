@@ -1,4 +1,6 @@
+################################################################################
 ## Step 1: Package Installation and Library Loading
+################################################################################
 # Install required packages (if not already installed) and load libraries.
 install.packages("quantmod")
 install.packages("ggplot2")
@@ -14,7 +16,9 @@ library(readxl)
 library(writexl)
 library(reshape2)
 
+################################################################################
 ## Step 2: Set the Working Directory and Read Data
+################################################################################
 # Adjust the working directory to where your Excel file is located. 
 setwd("C:\\Users\\jsaba\\Desktop\\Paper 1")
 
@@ -22,11 +26,15 @@ setwd("C:\\Users\\jsaba\\Desktop\\Paper 1")
 # at the working directory.
 data <- read_excel("FEMA_4_99MoE.xlsx", sheet = "Sheet 1")
 
+################################################################################
 ## Step 3: Set the Seed for Reproducibility
+################################################################################
 # This ensures that random number generation is reproducible.
 set.seed(1232)  # Change the seed value if needed.
 
+################################################################################
 ## Step 4: Define the Monte Carlo Simulation Function
+################################################################################
 monte_carlo_iteration <- function(MoE_df, X1, X2, num_simulations) {
   # Calculate Upper and Lower Bounds
   upper_bound <- X1 + X2
@@ -48,7 +56,9 @@ monte_carlo_iteration <- function(MoE_df, X1, X2, num_simulations) {
   return(simulated_data)
 }
 
+################################################################################
 ## Step 5: Run Monte Carlo Simulations for Variable Pairs
+################################################################################
 # Define simulation parameters.
 num_iterations <- 100
 num_simulations_per_variable <- 100
@@ -81,7 +91,9 @@ for (j in 1:(length(all_variables_2)-1)) {
   }
 }
 
+################################################################################
 ## Step 6: Calculate Percentile Ranks (EPL Calculation)
+################################################################################
 # Define a function to calculate percentile ranks (scaling between 0 and 1).
 calculate_percentile_rank <- function(variable_1, significance = 4) {
   percentile_rank_data <- apply(variable_1, 2, function(column) {
@@ -96,7 +108,9 @@ calculate_percentile_rank <- function(variable_1, significance = 4) {
 percent_rank_data <- calculate_percentile_rank(variable_1)
 percent_rank_df <- as.data.frame(percent_rank_data)
 
+################################################################################
 ## Step 7: Calculate Percentile Ranks for All Specified Simulation Variables
+################################################################################
 # List of simulation variable names to process.
 variable_names <- c("variable_1", "variable_3", "variable_5", "variable_7", "variable_9")
 
@@ -109,7 +123,9 @@ for (variable_name in variable_names) {
   assign(new_variable_name, percent_rank_df)
 }
 
-## Step 8: Calculate SPL (Summed Percentile Level)
+################################################################################
+## Step 8: Calculate SPL
+################################################################################
 # Combine the percentile rank dataframes into a list.
 data_frames_list <- list(percentrank_variable_1, percentrank_variable_3, 
                          percentrank_variable_5, percentrank_variable_7, 
@@ -129,7 +145,9 @@ for (col_index in 1:10000) {
 result_data_final_df_2 <- as.data.frame(result_matrix_2)
 write.csv(result_data_final_df_2, "result_data_final_df_2.csv", row.names = FALSE)
 
-## Step 9: Calculate RPL (Relative Percentile Level) and Additional Statistics
+################################################################################
+## Step 9: Calculate RPL 
+################################################################################
 # Redefine the percentile rank function (used for RPL calculation).
 calculate_percentile_rank <- function(result_data, significance = 4) {
   RPL_rank_2_data <- apply(result_data_2, 2, function(column) {
@@ -144,6 +162,9 @@ calculate_percentile_rank <- function(result_data, significance = 4) {
 RPL_rank_2_data <- calculate_percentile_rank(result_data)
 RPL_rank_2_df <- as.data.frame(RPL_rank_2_data)
 
+################################################################################
+## Step 10: Additional Statistics
+################################################################################
 # Calculate row-wise Mean and Standard Deviation.
 mean_svi <- rowMeans(RPL_rank_2_df, na.rm = TRUE)
 stdv_svi <- apply(RPL_rank_2_df, 1, function(x) sd(x, na.rm = TRUE))
